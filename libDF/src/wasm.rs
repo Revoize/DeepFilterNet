@@ -5,10 +5,8 @@ use wasm_bindgen::prelude::*;
 
 use crate::tract::*;
 
-#[wasm_bindgen]
 pub struct DFState(crate::tract::DfTract);
 
-#[wasm_bindgen]
 impl DFState {
     fn new(model_bytes: &[u8], channels: usize, atten_lim: f32) -> Self {
         let r_params = RuntimeParams::default_with_ch(channels).with_atten_lim(atten_lim);
@@ -30,7 +28,6 @@ impl DFState {
 ///
 /// Returns:
 ///     - DF state doing the full processing: stft, DNN noise reduction, istft.
-#[wasm_bindgen]
 pub unsafe fn df_create(
     model_bytes: &[u8],
     // channels: usize,
@@ -41,7 +38,6 @@ pub unsafe fn df_create(
 }
 
 /// Get DeepFilterNet frame size in samples.
-#[wasm_bindgen]
 pub unsafe fn df_get_frame_length(st: *mut DFState) -> usize {
     let state = st.as_mut().expect("Invalid pointer");
     state.0.hop_size
@@ -51,7 +47,6 @@ pub unsafe fn df_get_frame_length(st: *mut DFState) -> usize {
 ///
 /// Args:
 ///     - lim_db: New attenuation limit in dB.
-#[wasm_bindgen]
 pub unsafe fn df_set_atten_lim(st: *mut DFState, lim_db: f32) {
     let state = st.as_mut().expect("Invalid pointer");
     state.0.set_atten_lim(lim_db)
@@ -61,7 +56,6 @@ pub unsafe fn df_set_atten_lim(st: *mut DFState, lim_db: f32) {
 ///
 /// Args:
 ///     - beta: Post filter attenuation. Suitable range between 0.05 and 0;
-#[wasm_bindgen]
 pub unsafe fn df_set_post_filter_beta(st: *mut DFState, beta: f32) {
     let state = st.as_mut().expect("Invalid pointer");
     state.0.set_pf_beta(beta)
@@ -76,7 +70,6 @@ pub unsafe fn df_set_post_filter_beta(st: *mut DFState, beta: f32) {
 ///
 /// Returns:
 ///     - Local SNR of the current frame.
-#[wasm_bindgen]
 pub unsafe fn df_process_frame(st: *mut DFState, input: &[f32]) -> js_sys::Float32Array {
     let state = st.as_mut().expect("Invalid pointer");
     let input = ArrayView2::from_shape((1, state.0.hop_size), input).unwrap();
